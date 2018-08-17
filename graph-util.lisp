@@ -1,16 +1,16 @@
 (defun dot-name (exp)
   (substitute-if #\_ (complement #'alphanumericp) (prin1-to-string exp)))
 
-(defparameter *max-label-length* 30)
-
 (defun dot-label (exp)
-  (if exp
-    (let ((s (write-to-string exp :pretty nil)))
-      (if (> (length s) *max-label-length*)
-        (concatenate 'string (subseq s 0 (- *max-label-length* 3))
-                     "...")
-        s))
-    ""))
+  (let ((max-label-length 30))
+    (if exp
+      (let ((s (write-to-string exp :pretty nil)))
+        (if (> (length s) max-label-length)
+          (concatenate 'string (subseq s 0 (- max-label-length 3))
+                       "...")
+          s))
+      "")
+    ))
 
 (defun nodes->dot (nodes)
   (mapc (lambda (node)
@@ -40,7 +40,7 @@
   (princ "}")
   )
 
-(defun dot->png_OSX (fname thunk)
+(defun dot->png_osx (fname thunk)
   (with-open-file(*standard-output*
                   fname
                   :direction :output
@@ -49,7 +49,7 @@
   (sb-ext:run-program "/usr/local/bin/dot" (list "-Tpng" "-O" fname)))
 
 (defun graph->png (fname nodes edges)
-  (dot->png fname (lambda ()
+  (dot->png_osx fname (lambda ()
                           (graph->dot nodes edges))))
 
 (defun uedges->dot (edges)
@@ -74,6 +74,6 @@
   (princ "}"))
 
 (defun ugraph->png (fname nodes edges)
-  (dot->png fname
+  (dot->png_osx fname
             (lambda ()
                     (ugraph->dot nodes edges))))
