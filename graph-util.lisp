@@ -48,9 +48,21 @@
     (funcall thunk))
   (sb-ext:run-program "/usr/local/bin/dot" (list "-Tpng" "-O" fname)))
 
-(defun graph->png (fname nodes edges)
+  (defun dot->png_win (fname thunk)
+    (with-open-file(*standard-output*
+                    fname
+                    :direction :output
+                    :if-exists :supersede)
+      (funcall thunk))
+    (sb-ext:run-program "C:\Program Files (x86)\Graphviz2.38\bin\neato.exe" (list "-Tpng" "-O" fname)))
+
+(defun graph->png_osx (fname nodes edges)
   (dot->png_osx fname (lambda ()
                           (graph->dot nodes edges))))
+
+(defun graph->png_win (fname nodes edges)
+                            (dot->png_win fname (lambda ()
+                                                    (graph->dot nodes edges))))
 
 (defun uedges->dot (edges)
   (maplist (lambda (lst)
@@ -73,7 +85,12 @@
   (uedges->dot edges)
   (princ "}"))
 
-(defun ugraph->png (fname nodes edges)
+(defun ugraph->png_osx (fname nodes edges)
   (dot->png_osx fname
             (lambda ()
                     (ugraph->dot nodes edges))))
+
+  (defun ugraph->png_win (fname nodes edges)
+                      (dot->png_win fname
+                                (lambda ()
+                                        (ugraph->dot nodes edges))))
