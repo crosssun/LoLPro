@@ -40,6 +40,10 @@
   (princ "}")
   )
 
+(defparameter *path_OSX* "/usr/local/bin/dot")
+
+(defparameter *path_WIN* "C:/Program Files (x86)/Graphviz2.38/bin/neato.exe")
+
 (defun dot->png_osx (fname thunk)
   (with-open-file(*standard-output*
                   fname
@@ -48,20 +52,20 @@
     (funcall thunk))
   (sb-ext:run-program "/usr/local/bin/dot" (list "-Tpng" "-O" fname)))
 
-  (defun dot->png_win (fname thunk)
+  (defun dot->png (dotpath fname thunk)
     (with-open-file(*standard-output*
                     fname
                     :direction :output
                     :if-exists :supersede)
       (funcall thunk))
-    (sb-ext:run-program "C:\Program Files (x86)\Graphviz2.38\bin\neato.exe" (list "-Tpng" "-O" fname)))
+    (sb-ext:run-program dotpath (list "-Tpng" "-O" fname)))
 
 (defun graph->png_osx (fname nodes edges)
   (dot->png_osx fname (lambda ()
                           (graph->dot nodes edges))))
 
-(defun graph->png_win (fname nodes edges)
-                            (dot->png_win fname (lambda ()
+(defun graph->png (dotpath fname nodes edges)
+  (dot->png dotpath fname (lambda ()
                                                     (graph->dot nodes edges))))
 
 (defun uedges->dot (edges)
@@ -90,7 +94,7 @@
             (lambda ()
                     (ugraph->dot nodes edges))))
 
-  (defun ugraph->png_win (fname nodes edges)
-                      (dot->png_win fname
+  (defun ugraph->png (dotpath fname nodes edges)
+    (dot->png dotpath fname
                                 (lambda ()
                                         (ugraph->dot nodes edges))))
