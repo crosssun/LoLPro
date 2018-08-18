@@ -9,4 +9,4 @@
     (garden (living-room east door))
     (attic (living-room downstairs ladder))))
 
-;(ugraph->png *path_osx* "uwizard3.dot" *wizard-nodes* *wizard-edges*)
+(ugraph->png *dotpath_win* "uwizard4.dot" *wizard-nodes* *wizard-edges*)
