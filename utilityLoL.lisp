@@ -1,3 +1,28 @@
+(defun symb (&rest args)
+  (values (intern (apply #'mkstr args)))
+  )
+(defun group (source n)
+  (if (zerop n) (error "zero length"))
+  (labels ((rec (source acc)
+                (let ((rest (nthcdr n source)))
+                  (if (consp rest)
+                    (rec rest (cons
+                               (subseq source 0 n)
+                               acc))
+                    (nreverse
+                     (cons source acc))))))
+          (if source (rec source nil) nil))
+  )
+
+(defun longer (x y)
+  (labels ((compare (x y)
+                    (and (consp x)
+                         (or (null y)
+                             (compare (cdr x) (cdr y))))))
+          (if (and (listp x) (listp y))
+            (compare x y)
+            (> (length x) (length y)))))
+
 (defun flatten (x)
   (labels ((rec (x acc)
                (cond ((null x) acc)
@@ -37,12 +62,6 @@
               syms)
          ,@body))))
 
-(princ (flatten   `(let ((,g!result ,expr))
-                     (cond ((plusp ,g!result) ,pos)
-                       ((zerop ,g!result) ,zero)
-                       (t ,neg))
-                     )))
-
 (defmacro/g! nif (expr pos zero neg)
   `(let ((,g!result ,expr))
      (cond ((plusp ,g!result) ,pos)
@@ -50,4 +69,25 @@
        (t ,neg))
      ))
 
-(nif -3 (princ "+") (princ "0")(princ "-"))
+;(nif -3 (princ "+") (princ "0")(princ "-"))
+(defun fact (x)
+  (if (= x 0)
+      1
+      (* x (fact (- x 1))))
+  )
+(defun choose (n r)
+  (/ (fact n)
+     (fact (- n r))
+     (fact r))
+  )
+
+(defun tarai (x y z)
+  (if (<= x y)
+    y
+    (tarai
+     (tarai (1- x) y z)
+     (tarai (1- y) z x)
+     (tarai (1- z) x y))))
+
+(defun primep (n)
+  #+sbcl (sb-int:positive-primep n))
