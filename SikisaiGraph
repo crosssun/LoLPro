@@ -1,0 +1,8 @@
+(ql:quickload :sikisai)
+
+(defclass window (sik:window) ())
+
+(defmethod sik:user-display ((this window))
+  (sik:textb "Hello world!" 100.0 100.0))
+
+(sik:display-window (make-instance 'window))
