@@ -89,5 +89,14 @@
      (tarai (1- y) z x)
      (tarai (1- z) x y))))
 
+
+
 (defun primep (n)
   #+sbcl (sb-int:positive-primep n))
+
+(defun cortz (n)
+  (if (= n 1)
+    1
+    (if (evenp n)
+        (cortz (/ n 2))
+        (cortz (+ (* n 3) 1)))))
