@@ -122,6 +122,59 @@
       ((> i (- num 1) )result)
       (setf result (concatenate 'string result ".")))))
 
+(defmacro/g! as(tag content)
+  `(format t "<~(~A~)>~A</~(~A~)>" ',tag ,content ',tag))
+
+(defmacro/g! with (tag &rest body)
+  `(progn
+    (format t "~&<~(~A~)>~%" ',tag)
+    ,@body
+    (format t "~&<~(~A~)>~%" ',tag)))
+
+(defun brs(&optional (n 1))
+  (fresh-line)
+  (dotimes (i n)
+           (princ "<br>"))
+  (terpri))
+
+(defun html-file (base)
+  (format nil "~(~A~).html" base))
+
+(defmacro/g! page (name title &rest body)
+  (let ((ti (gensym)))
+    `(with-open-file (*standard-output*
+                      (html-file ,name)
+                      :direction :output
+                      :if-exists :supersede)
+       (let ((,ti ,title))
+         (as title ,ti)
+         (with center
+           (as h2 (string-upcase ,ti)))
+         (brs 3)
+         ,@body))))
+
+(defmacro/g! with-link (dest &rest body)
+  `(progn (format T "<a href=\"~A\">" (html-file ,dest))
+          ,@body
+          (princ "</a>")))
+
+(defun link-item (dest text)
+  (princ "<li>")
+  (with-link dest (princ text)
+    ))
+
+(defun button (dest text)
+  (princ "[")
+  (with-link dest
+    (princ text))
+  (format t "]~%"))
+
+(defmacro/g! ntimes (n &rest body)
+  `(do ((x 0 (+ x 1)))
+     ((>= x ,n))
+     ,@body))
+
+
 
 ;(setf path (make-pathname :name "myfile1"))
 
