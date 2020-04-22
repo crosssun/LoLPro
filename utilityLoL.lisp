@@ -1,3 +1,7 @@
+(defun mkstr (&rest args)
+  (with-output-to-string (s)
+    (dolist (a args) (princ a s))))
+
 (defun symb (&rest args)
   (values (intern (apply #'mkstr args)))
   )
@@ -101,13 +105,26 @@
         (cortz (/ n 2))
         (cortz (+ (* n 3) 1)))))
 
-(defun dots(number)
+(defun dots(num)
   (let ((dot-string ""))
-   (labels (dot (n, tmp)
+   (labels ((dot (n tmp)
                 (if (= n 0)
-                  (princ tmp)
-                  dot((- n 1) (concatenate tmp "."))))
-          if(= number 0)
-           (princ dot-string)
-           (dot(number,dot-string))) )
+                  tmp
+                  (dot (- n 1) (concatenate 'string tmp ".")))))
+          (if(= num 0)
+           dot-string
+           (dot num dot-string))))
   )
+
+(defun dots2(num)
+  (let ((result ""))
+    (do ((i 0 (+ i 1)))
+      ((> i (- num 1) )result)
+      (setf result (concatenate 'string result ".")))))
+
+
+;(setf path (make-pathname :name "myfile1"))
+
+;(setf str (open path :direction :output :if-exists :supersede))
+
+;(close str)
