@@ -58,7 +58,7 @@
             (let ((h (intersect s pt xr yr zr)))
               (when h
                 (let ((d (distance h pt)))
-                  (when (or (null dist) (<d dist))
+                  (when (or (null dist) (< d dist))
                     (setf surface s hit h dist d))))))
     (values surface hit)))
 
@@ -97,7 +97,7 @@
                       :z (+ (z pt) (* n zr))
                       ))))
 (defun normal (s pt)
-  (funcall (typecase s (sphere #'sphere-noral))
+  (funcall (typecase s (sphere #'sphere-normal))
            s pt))
 
 (defun sphere-normal (s pt)
@@ -114,7 +114,7 @@
   (defsphere 70 -100 -1200 200 .9)
   (do ((x -2 (1+ x)))
     ((> x 2))
-    (do ((z 2 (1+ z))) 
+    (do ((z 2 (1+ z)))
       ((> z 7))
       (defsphere (* x 200) 300 (* z -400) 40 .75)))
   (tracer (make-pathname :name "spheres.pgm") res))
